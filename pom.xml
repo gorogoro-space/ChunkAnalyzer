@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>space.gorogoro.chunkanalyzer</groupId>
+  <artifactId>ChunkAnalyzer</artifactId>
+  <version>1.0</version>
+  <packaging>jar</packaging>
+  <name>ChunkAnalyzer</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+        <version>3.1</version>
+      </plugin>
+      <!-- auto upload
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>scp-dev</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <scp trust="true" verbose="true" localFile="${project.basedir}/target/${project.artifactId}-${project.version}.${project.packaging}"
+                  remoteToFile="minecraft@192.168.1.1:/home/minecraft/plugins" port="22" keyfile="C:\key\ssh\privatekey\id_rsa" passphrase="passphrase"></scp>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.53</version>
+          </dependency>
+          <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-jsch</artifactId>
+            <version>1.6.5</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      -->
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.17.1-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>

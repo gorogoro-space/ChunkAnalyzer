@@ -1,0 +1,12 @@
+name: ChunkAnalyzer
+version: 1.0
+api-version: 1.15
+description: ChunkAnalyzer
+author: kubotan
+website: https://gorogoro.space/
+main: space.gorogoro.chunkanalyzer.ChunkAnalyzer
+
+commands:
+  chunka:
+    description: Provides commands to parse the chunks and show the results.
+    usage: /<command> [<world_name>]
