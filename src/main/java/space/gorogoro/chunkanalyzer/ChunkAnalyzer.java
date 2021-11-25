@@ -205,6 +205,10 @@ public class ChunkAnalyzer extends JavaPlugin {
     sender.sendMessage("");
     sender.sendMessage(ChatColor.GOLD + "■■■■■■■ ChunkAnalyzer ■■■■■■■" + ChatColor.RESET);
     sender.sendMessage("");
+    sender.spigot().sendMessage(getMsgHoverClickCmd(
+      ChatColor.RED + "  ＞＞ Click to teleport" + ChatColor.RESET, "Teleport to \"" + w.getName() + "\" World", "mvtp " + w.getName()
+    ));
+    sender.sendMessage("");
 
     String msg;
     String hoverMsg;
@@ -217,6 +221,8 @@ public class ChunkAnalyzer extends JavaPlugin {
       sender.spigot().sendMessage(getMsgHoverClickCmd(msg, hoverMsg, clickCmd));
     }
 
+    sender.sendMessage("");
+    sender.spigot().sendMessage(getMsgHoverClickCmd(ChatColor.RED + "  ＜＜ Back", "Click to go back" + ChatColor.RESET, "chunka"));
     sender.sendMessage("");
     sender.sendMessage(ChatColor.GOLD + "■■■■■■■■■■■■■■■■■■■■■■■■■■■" + ChatColor.RESET);
 
@@ -254,8 +260,8 @@ public class ChunkAnalyzer extends JavaPlugin {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
     Location l = getLocation(w, c);
-    String msg = String.format("  Click to teleport(XYZ): %.1f / %.1f / %.1f\n", l.getX(), l.getY(), l.getZ());
-    msg += "  File name: " + getRegionFileName(c);
+    String msg = ChatColor.RED + String.format("  Click to teleport(XYZ): %.1f / %.1f / %.1f", l.getX(), l.getY(), l.getZ()) + ChatColor.RESET;
+    msg += "\n  File name: " + getRegionFileName(c);
     Integer rownum = 0;
     for (String t : top.keySet()) {
       rownum++;
