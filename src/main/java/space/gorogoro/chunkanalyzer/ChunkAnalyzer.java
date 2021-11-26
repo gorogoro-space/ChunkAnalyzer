@@ -72,7 +72,7 @@ public class ChunkAnalyzer extends JavaPlugin {
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     try {
-      if (!command.getName().equals("chunka")) {
+      if (!command.getName().equals("chunka") && !command.getName().equals("chunkc")) {
         sender.sendMessage("That command is not available.");
         return true;
       }
@@ -93,22 +93,26 @@ public class ChunkAnalyzer extends JavaPlugin {
         return true;
       }
 
-      if(args.length == 0){
-        showWorldScore(sender, limit);
-      } else if(args.length == 1){
-        Pattern pattern = Pattern.compile("^[0-9a-z_]+$");
-        Matcher matcher = pattern.matcher(args[0]);
-        if(!matcher.matches()) {
-          sender.sendMessage("The world name should be a character from 0-9a-z_.");
-          return true;
+      if(command.getName().equals("chunka")) {
+        if(args.length == 0){
+          showWorldScore(sender, limit);
+        } else if(args.length == 1){
+          Pattern pattern = Pattern.compile("^[0-9a-z_]+$");
+          Matcher matcher = pattern.matcher(args[0]);
+          if(!matcher.matches()) {
+            sender.sendMessage("The world name should be a character from 0-9a-z_.");
+            return true;
+          }
+          if(getServer().getWorld(args[0]) == null) {
+            sender.sendMessage("Can't get the world from the world name.");
+            return true;
+          }
+          showChunkScore(sender, limit, getServer().getWorld(args[0]));
+        } else {
+          sender.sendMessage("Invalid world name argument.");
         }
-        if(getServer().getWorld(args[0]) == null) {
-          sender.sendMessage("Can't get the world from the world name.");
-          return true;
-        }
-        showChunkScore(sender, limit, getServer().getWorld(args[0]));
-      } else {
-        sender.sendMessage("Invalid world name argument.");
+      } else if(command.getName().equals("chunkc")) {
+        showCurrentChunkScore((Player)sender, limit);
       }
       return true;
     } catch (Exception e) {
@@ -206,7 +210,7 @@ public class ChunkAnalyzer extends JavaPlugin {
     sender.sendMessage(ChatColor.GOLD + "■■■■■■■ ChunkAnalyzer ■■■■■■■" + ChatColor.RESET);
     sender.sendMessage("");
     sender.spigot().sendMessage(getMsgHoverClickCmd(
-      ChatColor.RED + "  ＞＞ Click to teleport" + ChatColor.RESET, "Teleport to \"" + w.getName() + "\" World", "mvtp " + w.getName()
+      ChatColor.RED + "  ＞＞ Teleport to \"" + w.getName() + "\" world" + ChatColor.RESET, "Click to teleport", "mvtp " + w.getName()
     ));
     sender.sendMessage("");
 
@@ -226,6 +230,55 @@ public class ChunkAnalyzer extends JavaPlugin {
     sender.sendMessage("");
     sender.sendMessage(ChatColor.GOLD + "■■■■■■■■■■■■■■■■■■■■■■■■■■■" + ChatColor.RESET);
 
+  }
+
+
+  /**
+   * Show current chunk counter.
+   * @param Player p
+   * @param Integer limit
+   */
+  public void showCurrentChunkScore(Player sender, Integer limit){
+    Chunk c = sender.getLocation().getChunk();
+    Map<String, Integer> counter = new HashMap<String, Integer>();
+    String type;
+    for (BlockState b : c.getTileEntities()) {
+      type = b.getType().toString();
+      if (!counter.containsKey(type)) {
+        counter.put(type, 0);
+      }
+      counter.put(type, counter.get(type) + 1);
+    }
+    for (Entity e : c.getEntities()) {
+      type = e.getType().toString();
+      if (!counter.containsKey(type)) {
+        counter.put(type, 0);
+      }
+      counter.put(type, counter.get(type) + 1);
+    }
+
+    Stream<Map.Entry<String, Integer>> sorted = counter.entrySet().stream()
+        .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
+
+    Map<String, Integer> top = sorted.limit(limit)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+    sender.sendMessage("");
+    sender.sendMessage(ChatColor.GOLD + "■■■■■■ ChunkAnalyzer ■■■■■■" + ChatColor.RESET);
+    sender.sendMessage("");
+
+    Location l = getLocation(sender.getWorld(), c);
+    String msg = ChatColor.RED + String.format("  XYZ: %.1f / %.1f / %.1f", l.getX(), l.getY(), l.getZ()) + ChatColor.RESET;
+    msg += "\n  File name: " + getRegionFileName(c);
+    Integer rownum = 0;
+    for (String t : top.keySet()) {
+      rownum++;
+      msg += String.format("\n  %d. Type: %s Count: %d", rownum, t, counter.get(t));
+    }
+    sender.sendMessage(msg);
+
+    sender.sendMessage("");
+    sender.sendMessage(ChatColor.GOLD + "■■■■■■■■■■■■■■■■■■■■■■■■■■■" + ChatColor.RESET);
   }
 
   /**

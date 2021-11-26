@@ -10,3 +10,6 @@ commands:
   chunka:
     description: Provides commands to parse the chunks and show the results.
     usage: /<command> [<world_name>]
+  chunkc:
+    description: Provides a command to parse the current chunk and show the results.
+    usage: /<command> [<world_name>]
