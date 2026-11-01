@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -24,10 +23,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /*
  * ChunkAnalyzer
@@ -169,7 +168,7 @@ public class ChunkAnalyzer extends JavaPlugin {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
     sender.sendMessage("");
-    sender.sendMessage(ChatColor.GOLD + "■■■■■■ ChunkAnalyzer ■■■■■■" + ChatColor.RESET);
+    sender.sendMessage(Component.text("■■■■■■ ChunkAnalyzer ■■■■■■", NamedTextColor.GOLD));
     sender.sendMessage("");
 
     String msg;
@@ -177,11 +176,11 @@ public class ChunkAnalyzer extends JavaPlugin {
     for (World w : top.keySet()) {
       msg = String.format("  ● World: %s Count: %d", w.getName(), counter.get(w));
       clickCmd = "chunka " + w.getName();
-      sender.spigot().sendMessage(getMsgHoverClickCmd(msg, "Click to view details.", clickCmd));
+      sender.sendMessage(getMsgHoverClickCmd(Component.text(msg), Component.text("Click to view details."), clickCmd));
     }
 
     sender.sendMessage("");
-    sender.sendMessage(ChatColor.GOLD + "■■■■■■■■■■■■■■■■■■■■■■■■■■■" + ChatColor.RESET);
+    sender.sendMessage(Component.text("■■■■■■■■■■■■■■■■■■■■■■■■■■■", NamedTextColor.GOLD));
   }
 
   /**
@@ -207,28 +206,28 @@ public class ChunkAnalyzer extends JavaPlugin {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
     sender.sendMessage("");
-    sender.sendMessage(ChatColor.GOLD + "■■■■■■■ ChunkAnalyzer ■■■■■■■" + ChatColor.RESET);
+    sender.sendMessage(Component.text("■■■■■■■ ChunkAnalyzer ■■■■■■■", NamedTextColor.GOLD));
     sender.sendMessage("");
-    sender.spigot().sendMessage(getMsgHoverClickCmd(
-      ChatColor.RED + "  ＞＞ Teleport to \"" + w.getName() + "\" world" + ChatColor.RESET, "Click to teleport", "mvtp " + w.getName()
+    sender.sendMessage(getMsgHoverClickCmd(
+      Component.text("  ＞＞ Teleport to \"" + w.getName() + "\" world", NamedTextColor.RED), Component.text("Click to teleport"), "mvtp " + w.getName()
     ));
     sender.sendMessage("");
 
     String msg;
-    String hoverMsg;
+    Component hoverMsg;
     String clickCmd;
     for (Chunk c : top.keySet()) {
       msg = String.format("  ● Chunk: %d,%d Count: %d", c.getX(), c.getZ(), counter.get(c));
       hoverMsg = getEntityMsg(w, limit, c);
       Location l = getLocation(w, c);
       clickCmd = String.format("tp %.1f %.1f %.1f", l.getX(), l.getY(), l.getZ());
-      sender.spigot().sendMessage(getMsgHoverClickCmd(msg, hoverMsg, clickCmd));
+      sender.sendMessage(getMsgHoverClickCmd(Component.text(msg), hoverMsg, clickCmd));
     }
 
     sender.sendMessage("");
-    sender.spigot().sendMessage(getMsgHoverClickCmd(ChatColor.RED + "  ＜＜ Back", "Click to go back" + ChatColor.RESET, "chunka"));
+    sender.sendMessage(getMsgHoverClickCmd(Component.text("  ＜＜ Back", NamedTextColor.RED), Component.text("Click to go back"), "chunka"));
     sender.sendMessage("");
-    sender.sendMessage(ChatColor.GOLD + "■■■■■■■■■■■■■■■■■■■■■■■■■■■" + ChatColor.RESET);
+    sender.sendMessage(Component.text("■■■■■■■■■■■■■■■■■■■■■■■■■■■", NamedTextColor.GOLD));
 
   }
 
@@ -264,21 +263,23 @@ public class ChunkAnalyzer extends JavaPlugin {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
     sender.sendMessage("");
-    sender.sendMessage(ChatColor.GOLD + "■■■■■■ ChunkAnalyzer ■■■■■■" + ChatColor.RESET);
+    sender.sendMessage(Component.text("■■■■■■ ChunkAnalyzer ■■■■■■", NamedTextColor.GOLD));
     sender.sendMessage("");
 
     Location l = getLocation(sender.getWorld(), c);
-    String msg = ChatColor.RED + String.format("  XYZ: %.1f / %.1f / %.1f", l.getX(), l.getY(), l.getZ()) + ChatColor.RESET;
-    msg += "\n  File name: " + getRegionFileName(c);
+    String msg = "\n  File name: " + getRegionFileName(c);
     Integer rownum = 0;
     for (String t : top.keySet()) {
       rownum++;
       msg += String.format("\n  %d. Type: %s Count: %d", rownum, t, counter.get(t));
     }
-    sender.sendMessage(msg);
+    sender.sendMessage(Component.text()
+      .append(Component.text(String.format("  XYZ: %.1f / %.1f / %.1f", l.getX(), l.getY(), l.getZ()), NamedTextColor.RED))
+      .append(Component.text(msg))
+      .build());
 
     sender.sendMessage("");
-    sender.sendMessage(ChatColor.GOLD + "■■■■■■■■■■■■■■■■■■■■■■■■■■■" + ChatColor.RESET);
+    sender.sendMessage(Component.text("■■■■■■■■■■■■■■■■■■■■■■■■■■■", NamedTextColor.GOLD));
   }
 
   /**
@@ -288,7 +289,7 @@ public class ChunkAnalyzer extends JavaPlugin {
    * @param Chunk c
    * @return Returns the text of the entity information.
    */
-  public String getEntityMsg(World w, Integer limit, Chunk c) {
+  public Component getEntityMsg(World w, Integer limit, Chunk c) {
     Map<String, Integer> counter = new HashMap<String, Integer>();
     String type;
     for (BlockState b : c.getTileEntities()) {
@@ -313,40 +314,39 @@ public class ChunkAnalyzer extends JavaPlugin {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
     Location l = getLocation(w, c);
-    String msg = ChatColor.RED + String.format("  Click to teleport(XYZ): %.1f / %.1f / %.1f", l.getX(), l.getY(), l.getZ()) + ChatColor.RESET;
-    msg += "\n  File name: " + getRegionFileName(c);
+    String msg = "\n  File name: " + getRegionFileName(c);
     Integer rownum = 0;
     for (String t : top.keySet()) {
       rownum++;
       msg += String.format("\n  %d. Type: %s Count: %d", rownum, t, counter.get(t));
     }
-    return msg;
+    return Component.text()
+      .append(Component.text(String.format("  Click to teleport(XYZ): %.1f / %.1f / %.1f", l.getX(), l.getY(), l.getZ()), NamedTextColor.RED))
+      .append(Component.text(msg))
+      .build();
   }
 
   /**
    * Get message with hover and click command.
-   * @param String msg
-   * @param String hoverMsg
+   * @param Component msg
+   * @param Component hoverMsg
    * @param String clickCmd
-   * @return Returns the TextComponent corresponding to the argument.
+   * @return Returns the Component corresponding to the argument.
    */
-  public static TextComponent getMsgHoverClickCmd(String msg, String hoverMsg, String clickCmd) {
-    TextComponent t = new TextComponent(msg);
-    t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverMsg)));
-    t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + clickCmd));
-    return t;
+  public static Component getMsgHoverClickCmd(Component msg, Component hoverMsg, String clickCmd) {
+    return msg
+      .hoverEvent(HoverEvent.showText(hoverMsg))
+      .clickEvent(ClickEvent.runCommand("/" + clickCmd));
   }
 
   /**
    * Get message with click command.
-   * @param String msg
+   * @param Component msg
    * @param String clickCmd
-   * @return Returns the TextComponent corresponding to the argument.
+   * @return Returns the Component corresponding to the argument.
    */
-  public static TextComponent getMsgClickCmd(String msg, String clickCmd) {
-    TextComponent t = new TextComponent(msg);
-    t.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + clickCmd));
-    return t;
+  public static Component getMsgClickCmd(Component msg, String clickCmd) {
+    return msg.clickEvent(ClickEvent.runCommand("/" + clickCmd));
   }
 
   /**
