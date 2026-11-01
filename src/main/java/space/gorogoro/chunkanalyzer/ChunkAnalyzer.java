@@ -157,7 +157,7 @@ public class ChunkAnalyzer extends JavaPlugin {
           counter.put(w, 0);
         }
         counter.put(w, counter.get(w) + c.getEntities().length);
-        counter.put(w, counter.get(w) + c.getTileEntities().length);
+        counter.put(w, counter.get(w) + c.getTileEntities(false).length);
       }
     }
 
@@ -196,7 +196,7 @@ public class ChunkAnalyzer extends JavaPlugin {
         counter.put(c, 0);
       }
       counter.put(c, counter.get(c) + c.getEntities().length);
-      counter.put(c, counter.get(c) + c.getTileEntities().length);
+      counter.put(c, counter.get(c) + c.getTileEntities(false).length);
     }
 
     Stream<Map.Entry<Chunk, Integer>> sorted = counter.entrySet().stream()
@@ -241,7 +241,7 @@ public class ChunkAnalyzer extends JavaPlugin {
     Chunk c = sender.getLocation().getChunk();
     Map<String, Integer> counter = new HashMap<String, Integer>();
     String type;
-    for (BlockState b : c.getTileEntities()) {
+    for (BlockState b : c.getTileEntities(false)) {
       type = b.getType().toString();
       if (!counter.containsKey(type)) {
         counter.put(type, 0);
@@ -292,7 +292,7 @@ public class ChunkAnalyzer extends JavaPlugin {
   public Component getEntityMsg(World w, Integer limit, Chunk c) {
     Map<String, Integer> counter = new HashMap<String, Integer>();
     String type;
-    for (BlockState b : c.getTileEntities()) {
+    for (BlockState b : c.getTileEntities(false)) {
       type = b.getType().toString();
       if (!counter.containsKey(type)) {
         counter.put(type, 0);
