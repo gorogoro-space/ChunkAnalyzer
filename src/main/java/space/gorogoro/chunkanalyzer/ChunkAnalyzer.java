@@ -368,7 +368,7 @@ public class ChunkAnalyzer extends JavaPlugin {
     return new Location(
       w,
       c.getX() << 4,
-      w.getHighestBlockYAt(c.getX(), c.getZ()),
+      w.getHighestBlockYAt(c.getX() << 4, c.getZ() << 4),
       c.getZ() << 4
     );
   }
